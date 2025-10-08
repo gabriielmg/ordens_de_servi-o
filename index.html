@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ordens de Serviço - Cumora Facilities</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f7fb;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 { color: #0077b6; margin-bottom: 20px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    button {
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #0096c7;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover { background: #023e8a; }
+    button:disabled { background: #ccc; cursor: not-allowed; }
+    .os-list {
+      margin-top: 30px;
+      display: none;
+      text-align: left;
+      max-width: 800px;
+      margin: 30px auto;
+    }
+    .os-list h2 { color: #03045e; text-align: center; }
+    .os-list ul {
+      list-style: none;
+      padding: 0;
+    }
+    .os-list li {
+      background: white;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .reload-btn { margin-top: 20px; background: #28a745; }
+    .reload-btn:hover { background: #218838; }
+    .error { color: red; margin-top: 20px; }
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+      body { padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Ordens de Serviço - Cumora Facilities</h1>
+  <div class="grid" id="propriedades"></div>
+  <button class="reload-btn" onclick="carregarDados()">Recarregar Dados</button>
+  <div class="os-list" id="listaOS"></div>
+
+  <script>
+    const spreadsheetId = "1vp45PmYUejX_zQpMWgOMC5AejB7h_wKe4DVPRVrymRU"; // Ex: "1ABC123XYZ" - ID da planilha
+    const apiKey = "AIzaSyBR-kigig741xsyRnllvtKbsxEGBQml0PE"; // Ex: "AIzaSyB...abc123" - Chave da API
+    const range = "Sheet1!A:E"; // Aba e colunas: A=Propriedade, B=Código_OS, C=Descrição, D=Data
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
+
+    async function carregarDados() {
+      const divProps = document.getElementById("propriedades");
+      const divLista = document.getElementById("listaOS");
+      divProps.innerHTML = ''; // Limpa propriedades antigas
+      divLista.innerHTML = '<p>Carregando...</p>'; // Indicador de loading
+      divLista.style.display = 'block';
+
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) {
+          const errorData = await resp.json();
+          throw new Error(`Erro HTTP ${resp.status}: ${errorData.error?.message || 'Verifique o ID, API Key e compartilhamento da planilha'}`);
+        }
+        const response = await resp.json();
+        const values = response.values || []; // Array de linhas [ [cabeçalho], [dados1], ... ]
+
+        if (values.length < 2) {
+          throw new Error('Planilha vazia ou sem dados (verifique colunas A:D na aba Sheet1)');
+        }
+
+        // Pula cabeçalho (primeira linha) e processa dados
+        const dados = values.slice(1).filter(row => row.length > 0 && row[0]); // Ignora linhas vazias
+
+        const propriedades = {};
+        dados.forEach(row => {
+          const prop = (row[0] || "").trim();
+          if (!prop) return; // Ignora se sem propriedade
+          if (!propriedades[prop]) propriedades[prop] = [];
+          const dataStr = row[3] || ""; // Data na coluna D
+          const data = dataStr ? new Date(dataStr.split('/').reverse().join('-')) : new Date(); // Assume DD/MM para ordenação
+          propriedades[prop].push({
+            texto: `${row[1] || ""} — ${row[2] || ""} — ${dataStr}`,
+            data: data
+          });
+        });
+
+        // Ordena OS por data em cada propriedade
+        Object.keys(propriedades).forEach(prop => {
+          propriedades[prop].sort((a, b) => a.data - b.data);
+        });
+
+        divLista.innerHTML = ''; // Limpa loading
+        montarInterface(propriedades);
+      } catch (error) {
+        console.error(error);
+        divLista.innerHTML = `<p class="error">Erro ao carregar dados: ${error.message}.<br>Verifique: ID da planilha, API Key válida, planilha pública e colunas corretas. Recarregue ou confira o console (F12).</p>`;
+      }
+    }
+
+    function montarInterface(propriedades) {
+      const divProps = document.getElementById("propriedades");
+
+      Object.keys(propriedades).sort().forEach(nome => { // Ordena propriedades alfabeticamente
+        const btn = document.createElement("button");
+        btn.textContent = nome;
+        btn.setAttribute('aria-label', `Mostrar ordens de serviço para ${nome}`);
+        btn.onclick = () => mostrarOS(nome, propriedades);
+        divProps.appendChild(btn);
+      });
+
+      if (Object.keys(propriedades).length === 0) {
+        divProps.innerHTML = '<p>Nenhuma propriedade encontrada.</p>';
+      }
+    }
+
+    function mostrarOS(nome, propriedades) {
+      const divLista = document.getElementById("listaOS");
+      const ordens = propriedades[nome].map(o => o.texto);
+      
+      if (!ordens.length) {
+        divLista.innerHTML = `<h2>${nome}</h2><p>Sem ordens de serviço registradas no momento.</p>`;
+      } else {
+        divLista.innerHTML = `<h2>${nome} (${ordens.length} ordem(s))</h2><ul>${ordens.map(o => `<li>${o}</li>`).join('')}</ul>`;
+      }
+      divLista.style.display = "block";
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }
+
+    // Carrega dados na inicialização
+    carregarDados();
+  </script>
+</body>
+</html>
