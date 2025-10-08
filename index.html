@@ -3,80 +3,321 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ordens de Serviço - Cumora Facilities</title>
+  <title>Sistema de Ordens de Serviço - Facilities</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary-color: #1e3a8a; /* Azul corporativo */
+      --accent-color: #3b82f6; /* Azul claro para acentos */
+      --success-color: #10b981; /* Verde para reload */
+      --danger-color: #ef4444; /* Vermelho para erros/datas vencidas */
+      --bg-color: #f8fafc; /* Fundo claro */
+      --card-bg: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --border-radius: 12px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f1f7fb;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, var(--bg-color) 0%, #e2e8f0 100%);
       margin: 0;
-      padding: 20px;
+      padding: 0;
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Header Profissional */
+    header {
+      background: var(--primary-color);
+      color: white;
+      padding: 1rem 1.5rem;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 10;
       text-align: center;
     }
-    h1 { color: #0077b6; margin-bottom: 20px; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 10px;
-      max-width: 800px;
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    header::before {
+      content: "📋"; /* Ícone simples para Facilities */
+      font-size: 1.8rem;
+    }
+
+    main {
+      max-width: 1200px;
       margin: 0 auto;
+      padding: 2rem 1rem;
     }
-    button {
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      background: #0096c7;
-      color: white;
-      font-weight: bold;
+
+    /* Grid de Capelas (Botões) */
+    .capelas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .capela-btn {
+      background: var(--card-bg);
+      border: 2px solid #e2e8f0;
+      border-radius: var(--border-radius);
+      padding: 1.25rem 1rem;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-primary);
       cursor: pointer;
-      transition: 0.3s;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+      text-align: center;
+      min-height: 60px; /* Altura mínima para toque */
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    button:hover { background: #023e8a; }
-    button:disabled { background: #ccc; cursor: not-allowed; }
-    .os-list {
-      margin-top: 30px;
+    .capela-btn:hover, .capela-btn:focus {
+      background: var(--accent-color);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      outline: none;
+    }
+    .capela-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Botão Reload */
+    .reload-section {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .reload-btn {
+      background: var(--success-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 0.75rem 2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+      min-width: 200px;
+    }
+    .reload-btn:hover, .reload-btn:focus {
+      background: #059669;
+      transform: translateY(-1px);
+    }
+
+    /* Lista de OS */
+    .os-section {
       display: none;
-      text-align: left;
-      max-width: 800px;
-      margin: 30px auto;
+      animation: fadeIn 0.5s ease;
+      margin-top: 2rem;
     }
-    .os-list h2 { color: #03045e; text-align: center; }
-    .os-list ul {
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .os-section h2 {
+      color: var(--primary-color);
+      font-size: 1.75rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+    }
+    .os-list {
       list-style: none;
       padding: 0;
+      display: grid;
+      gap: 1rem;
     }
-    .os-list li {
-      background: white;
-      padding: 10px;
-      margin-bottom: 8px;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    .os-item {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border-left: 4px solid var(--accent-color);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
     }
-    .reload-btn { margin-top: 20px; background: #28a745; }
-    .reload-btn:hover { background: #218838; }
-    .error { color: red; margin-top: 20px; }
-    @media (max-width: 600px) {
-      .grid { grid-template-columns: 1fr; }
-      body { padding: 10px; }
+    .os-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    .os-item strong {
+      color: var(--primary-color);
+      font-size: 1.1rem;
+    }
+    .os-item .data-badge {
+      background: var(--danger-color);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      align-self: flex-start;
+      width: fit-content;
+    }
+    .os-item .descricao {
+      font-style: italic;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+    }
+
+    /* Loading Spinner */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100px;
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+    }
+    .spinner {
+      border: 4px solid #f3f4f6;
+      border-top: 4px solid var(--accent-color);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-right: 1rem;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Erro Estilizado */
+    .error {
+      background: #fef2f2;
+      border: 1px solid var(--danger-color);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      color: var(--danger-color);
+      text-align: center;
+      box-shadow: var(--shadow);
+      margin: 2rem auto;
+      max-width: 600px;
+    }
+    .error::before {
+      content: "⚠️";
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Media Queries: Mobile-First */
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 1.25rem;
+      }
+      header::before {
+        font-size: 1.5rem;
+      }
+      main {
+        padding: 1rem 0.5rem;
+      }
+      .capelas-grid {
+        grid-template-columns: 1fr; /* Uma coluna no mobile */
+        gap: 0.75rem;
+      }
+      .capela-btn {
+        padding: 1.5rem 1rem; /* Maior para toque */
+        min-height: 56px; /* Guideline mobile */
+        font-size: 1.1rem;
+      }
+      .os-section h2 {
+        font-size: 1.5rem;
+      }
+      .os-item {
+        padding: 1.25rem;
+      }
+      .reload-btn {
+        width: 100%;
+        min-width: auto;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .capelas-grid {
+        grid-template-columns: repeat(2, 1fr); /* Duas colunas em tablet */
+      }
+    }
+
+    @media (min-width: 1025px) {
+      .capelas-grid {
+        grid-template-columns: repeat(3, 1fr); /* Três+ no desktop */
+      }
+      .os-item {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .os-item .data-badge {
+        align-self: flex-end;
+        order: 2;
+      }
+      .os-item .descricao {
+        order: 3;
+        flex: 1;
+        margin-top: 0;
+        margin-left: 1rem;
+      }
+    }
+
+    /* Foco para Acessibilidade */
+    button:focus {
+      outline: 2px solid var(--accent-color);
+      outline-offset: 2px;
     }
   </style>
 </head>
 <body>
-  <h1>Ordens de Serviço - Cumora Facilities</h1>
-  <div class="grid" id="propriedades"></div>
-  <button class="reload-btn" onclick="carregarDados()">Recarregar Dados</button>
-  <div class="os-list" id="listaOS"></div>
+  <header>
+    <h1>Sistema de Ordens de Serviço</h1>
+  </header>
+  <main>
+    <div class="capelas-grid" id="propriedades"></div>
+    <div class="reload-section">
+      <button class="reload-btn" onclick="carregarDados()">🔄 Recarregar Dados</button>
+    </div>
+    <div class="os-section" id="listaOS"></div>
+  </main>
 
   <script>
     const spreadsheetId = "1vp45PmYUejX_zQpMWgOMC5AejB7h_wKe4DVPRVrymRU"; // Ex: "1ABC123XYZ" - ID da planilha
     const apiKey = "AIzaSyBR-kigig741xsyRnllvtKbsxEGBQml0PE"; // Ex: "AIzaSyB...abc123" - Chave da API
-    const range = "Sheet1!A:E"; // Aba e colunas: A=Propriedade, B=Código_OS, C=Descrição, D=Data
+    const range = "Sheet1!A:E"; // Lê colunas A (Capela) a E (Descrição)
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
 
     async function carregarDados() {
       const divProps = document.getElementById("propriedades");
       const divLista = document.getElementById("listaOS");
       divProps.innerHTML = ''; // Limpa propriedades antigas
-      divLista.innerHTML = '<p>Carregando...</p>'; // Indicador de loading
+      divLista.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          Carregando ordens de serviço...
+        </div>
+      `; // Spinner de loading
+      divLista.classList.add('os-section'); // Para animação
       divLista.style.display = 'block';
 
       try {
@@ -89,65 +330,76 @@
         const values = response.values || []; // Array de linhas [ [cabeçalho], [dados1], ... ]
 
         if (values.length < 2) {
-          throw new Error('Planilha vazia ou sem dados (verifique colunas A:D na aba Sheet1)');
+          throw new Error('Planilha vazia ou sem dados (verifique colunas A:E na aba Sheet1: Capela, N° OS, Data de vencimento, Assunto, Descrição)');
         }
 
         // Pula cabeçalho (primeira linha) e processa dados
         const dados = values.slice(1).filter(row => row.length > 0 && row[0]); // Ignora linhas vazias
 
-        const propriedades = {};
+        const capelas = {}; // Agrupamento por Capela (coluna A)
         dados.forEach(row => {
-          const prop = (row[0] || "").trim();
-          if (!prop) return; // Ignora se sem propriedade
-          if (!propriedades[prop]) propriedades[prop] = [];
-          const dataStr = row[3] || ""; // Data na coluna D
+          const capela = (row[0] || "").trim(); // Coluna A: Capela
+          if (!capela) return; // Ignora se sem capela
+          if (!capelas[capela]) capelas[capela] = [];
+          const dataStr = row[2] || ""; // Coluna C: Data de vencimento
           const data = dataStr ? new Date(dataStr.split('/').reverse().join('-')) : new Date(); // Assume DD/MM para ordenação
-          propriedades[prop].push({
-            texto: `${row[1] || ""} — ${row[2] || ""} — ${dataStr}`,
-            data: data
+          const numeroOS = row[1] || ""; // Coluna B: N° OS
+          const assunto = row[3] || ""; // Coluna D: Assunto
+          const descricao = row[4] || ""; // Coluna E: Descrição
+          capelas[capela].push({
+            texto: `${numeroOS} — ${assunto} — ${dataStr} — ${descricao}`, // Formato: N° OS — Assunto — Data — Descrição
+            data: data,
+            dataStr: dataStr // Para badge
           });
         });
 
-        // Ordena OS por data em cada propriedade
-        Object.keys(propriedades).forEach(prop => {
-          propriedades[prop].sort((a, b) => a.data - b.data);
+        // Ordena OS por data de vencimento em cada capela
+        Object.keys(capelas).forEach(cap => {
+          capelas[cap].sort((a, b) => a.data - b.data);
         });
 
         divLista.innerHTML = ''; // Limpa loading
-        montarInterface(propriedades);
+        montarInterface(capelas);
       } catch (error) {
         console.error(error);
-        divLista.innerHTML = `<p class="error">Erro ao carregar dados: ${error.message}.<br>Verifique: ID da planilha, API Key válida, planilha pública e colunas corretas. Recarregue ou confira o console (F12).</p>`;
+        divLista.innerHTML = `<div class="error">${error.message}<br>Verifique: ID da planilha, API Key válida, planilha pública e colunas corretas (A: Capela, B: N° OS, C: Data, D: Assunto, E: Descrição). Recarregue ou confira o console (F12).</div>`;
       }
     }
 
-    function montarInterface(propriedades) {
+    function montarInterface(capelas) {
       const divProps = document.getElementById("propriedades");
 
-      Object.keys(propriedades).sort().forEach(nome => { // Ordena propriedades alfabeticamente
+      Object.keys(capelas).sort().forEach(nome => { // Ordena capelas alfabeticamente
         const btn = document.createElement("button");
-        btn.textContent = nome;
+        btn.className = "capela-btn";
+        btn.textContent = nome; // Nome da Capela
         btn.setAttribute('aria-label', `Mostrar ordens de serviço para ${nome}`);
-        btn.onclick = () => mostrarOS(nome, propriedades);
+        btn.onclick = () => mostrarOS(nome, capelas);
         divProps.appendChild(btn);
       });
 
-      if (Object.keys(propriedades).length === 0) {
-        divProps.innerHTML = '<p>Nenhuma propriedade encontrada.</p>';
+      if (Object.keys(capelas).length === 0) {
+        divProps.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Nenhuma capela encontrada.</p>';
       }
     }
 
-    function mostrarOS(nome, propriedades) {
+    function mostrarOS(nome, capelas) {
       const divLista = document.getElementById("listaOS");
-      const ordens = propriedades[nome].map(o => o.texto);
+      const ordens = capelas[nome];
       
       if (!ordens.length) {
-        divLista.innerHTML = `<h2>${nome}</h2><p>Sem ordens de serviço registradas no momento.</p>`;
+        divLista.innerHTML = `<h2>${nome}</h2><p style="text-align: center; color: var(--text-secondary);">Sem ordens de serviço registradas no momento.</p>`;
       } else {
-        divLista.innerHTML = `<h2>${nome} (${ordens.length} ordem(s))</h2><ul>${ordens.map(o => `<li>${o}</li>`).join('')}</ul>`;
+        divLista.innerHTML = `<h2>${nome} (${ordens.length} OS's)</h2><ul class="os-list">${ordens.map(o => `
+          <li class="os-item">
+            <strong>${o.texto.split(' — ')[0]} — ${o.texto.split(' — ')[1]}</strong>
+            <span class="data-badge">${o.dataStr}</span>
+            <p class="descricao">${o.texto.split(' — ')[3]}</p> <!-- CORREÇÃO: slice(3) para pegar só a descrição (índice 3), sem repetir data -->
+          </li>
+        `).join('')}</ul>`;
       }
       divLista.style.display = "block";
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+      divLista.scrollIntoView({ behavior: "smooth" }); // Scroll suave para a seção
     }
 
     // Carrega dados na inicialização
