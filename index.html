@@ -1,409 +1,517 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Ordens de Serviço - Facilities</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary-color: #1e3a8a; /* Azul corporativo */
-      --accent-color: #3b82f6; /* Azul claro para acentos */
-      --success-color: #10b981; /* Verde para reload */
-      --danger-color: #ef4444; /* Vermelho para erros/datas vencidas */
-      --bg-color: #f8fafc; /* Fundo claro */
-      --card-bg: #ffffff;
-      --text-primary: #1e293b;
-      --text-secondary: #64748b;
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      --border-radius: 12px;
-      --transition: all 0.3s ease;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Ordens de Serviço - Facilities</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0d47a1;
+            --accent-color: #1976d2;
+            --success-color: #4caf50;
+            --danger-color: #ef5350;
+            --bg-color: #e3f2fd;
+            --card-bg: #ffffff;
+            --text-primary: #0d1b2a;
+            --text-secondary: #44546b;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 14px;
+            --transition: all 0.3s ease;
+        }
 
-    * {
-      box-sizing: border-box;
-    }
+        * {
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, var(--bg-color) 0%, #e2e8f0 100%);
-      margin: 0;
-      padding: 0;
-      color: var(--text-primary);
-      line-height: 1.6;
-      min-height: 100vh;
-    }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
 
-    /* Header Profissional */
-    header {
-      background: var(--primary-color);
-      color: white;
-      padding: 1rem 1.5rem;
-      box-shadow: var(--shadow);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      text-align: center;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 1.5rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-    header::before {
-      content: "📋"; /* Ícone simples para Facilities */
-      font-size: 1.8rem;
-    }
+        header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom-left-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
 
-    main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem 1rem;
-    }
+        header h1 {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.6rem;
+        }
 
-    /* Grid de Capelas (Botões) */
-    .capelas-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .capela-btn {
-      background: var(--card-bg);
-      border: 2px solid #e2e8f0;
-      border-radius: var(--border-radius);
-      padding: 1.25rem 1rem;
-      font-size: 1rem;
-      font-weight: 500;
-      color: var(--text-primary);
-      cursor: pointer;
-      transition: var(--transition);
-      box-shadow: var(--shadow);
-      text-align: center;
-      min-height: 60px; /* Altura mínima para toque */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .capela-btn:hover, .capela-btn:focus {
-      background: var(--accent-color);
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      outline: none;
-    }
-    .capela-btn:active {
-      transform: translateY(0);
-    }
+        header::before {
+            content: "📋";
+            font-size: 1.8rem;
+        }
 
-    /* Botão Reload */
-    .reload-section {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .reload-btn {
-      background: var(--success-color);
-      color: white;
-      border: none;
-      border-radius: var(--border-radius);
-      padding: 0.75rem 2rem;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-      box-shadow: var(--shadow);
-      min-width: 200px;
-    }
-    .reload-btn:hover, .reload-btn:focus {
-      background: #059669;
-      transform: translateY(-1px);
-    }
+        main {
+            max-width: 1200px;
+            margin: 1rem auto;
+            padding: 1rem;
+        }
 
-    /* Lista de OS */
-    .os-section {
-      display: none;
-      animation: fadeIn 0.5s ease;
-      margin-top: 2rem;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .os-section h2 {
-      color: var(--primary-color);
-      font-size: 1.75rem;
-      text-align: center;
-      margin-bottom: 1.5rem;
-      font-weight: 700;
-    }
-    .os-list {
-      list-style: none;
-      padding: 0;
-      display: grid;
-      gap: 1rem;
-    }
-    .os-item {
-      background: var(--card-bg);
-      border-radius: var(--border-radius);
-      padding: 1.5rem;
-      box-shadow: var(--shadow);
-      transition: var(--transition);
-      border-left: 4px solid var(--accent-color);
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .os-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-    .os-item strong {
-      color: var(--primary-color);
-      font-size: 1.1rem;
-    }
-    .os-item .data-badge {
-      background: var(--danger-color);
-      color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      align-self: flex-start;
-      width: fit-content;
-    }
-    .os-item .descricao {
-      font-style: italic;
-      color: var(--text-secondary);
-      margin-top: 0.5rem;
-    }
+        /* Grid / Select de Capelas */
+        .capelas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
 
-    /* Loading Spinner */
-    .loading {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100px;
-      font-size: 1.1rem;
-      color: var(--text-secondary);
-    }
-    .spinner {
-      border: 4px solid #f3f4f6;
-      border-top: 4px solid var(--accent-color);
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin-right: 1rem;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+        .capela-btn {
+            background: var(--card-bg);
+            border: 2px solid #bbdefb;
+            border-radius: var(--border-radius);
+            padding: 1.25rem 1rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+        }
 
-    /* Erro Estilizado */
-    .error {
-      background: #fef2f2;
-      border: 1px solid var(--danger-color);
-      border-radius: var(--border-radius);
-      padding: 1.5rem;
-      color: var(--danger-color);
-      text-align: center;
-      box-shadow: var(--shadow);
-      margin: 2rem auto;
-      max-width: 600px;
-    }
-    .error::before {
-      content: "⚠️";
-      font-size: 2rem;
-      display: block;
-      margin-bottom: 0.5rem;
-    }
+        .capela-btn:hover,
+        .capela-btn:focus {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+        }
 
-    /* Media Queries: Mobile-First */
-    @media (max-width: 768px) {
-      header h1 {
-        font-size: 1.25rem;
-      }
-      header::before {
-        font-size: 1.5rem;
-      }
-      main {
-        padding: 1rem 0.5rem;
-      }
-      .capelas-grid {
-        grid-template-columns: 1fr; /* Uma coluna no mobile */
-        gap: 0.75rem;
-      }
-      .capela-btn {
-        padding: 1.5rem 1rem; /* Maior para toque */
-        min-height: 56px; /* Guideline mobile */
-        font-size: 1.1rem;
-      }
-      .os-section h2 {
-        font-size: 1.5rem;
-      }
-      .os-item {
-        padding: 1.25rem;
-      }
-      .reload-btn {
-        width: 100%;
-        min-width: auto;
-      }
-    }
+        /* Estilo do select de capelas */
+        .capelas-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius);
+            border: 2px solid #bbdefb;
+            background: var(--card-bg);
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+        }
 
-    @media (min-width: 769px) and (max-width: 1024px) {
-      .capelas-grid {
-        grid-template-columns: repeat(2, 1fr); /* Duas colunas em tablet */
-      }
-    }
+        .capelas-select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
 
-    @media (min-width: 1025px) {
-      .capelas-grid {
-        grid-template-columns: repeat(3, 1fr); /* Três+ no desktop */
-      }
-      .os-item {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: flex-start;
-      }
-      .os-item .data-badge {
-        align-self: flex-end;
-        order: 2;
-      }
-      .os-item .descricao {
-        order: 3;
-        flex: 1;
-        margin-top: 0;
-        margin-left: 1rem;
-      }
-    }
+        /* Botão Recarregar */
+        .reload-section {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
 
-    /* Foco para Acessibilidade */
-    button:focus {
-      outline: 2px solid var(--accent-color);
-      outline-offset: 2px;
-    }
-  </style>
+        .reload-btn {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.75rem 2rem;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            width: 100%;
+            max-width: 250px;
+        }
+
+        .reload-btn:hover,
+        .reload-btn:focus {
+            background: #388e3c;
+        }
+
+        /* Filtro por Data */
+        .filter-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .filter-section .date-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            width: 150px;
+        }
+
+        .filter-section input[type="date"] {
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            border: 1px solid #90caf9;
+        }
+
+        .filter-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .filter-btn:disabled {
+            background: #90a4ae;
+            cursor: not-allowed;
+        }
+
+        /* Lista de OS */
+        .os-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .os-section h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .os-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            gap: 1rem;
+        }
+
+        .os-item {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .os-item strong {
+            color: var(--primary-color);
+        }
+
+        .os-item .data-badge {
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            width: fit-content;
+        }
+
+        .os-item .data-badge.overdue {
+            background: var(--danger-color); /* data anterior a hoje */
+        }
+
+        .os-item .data-badge.today {
+            background: #ff9800; /* hoje */
+        }
+
+        .os-item .data-badge.this-week {
+            background: #fdd835; /* dentro dos próximos 7 dias */
+            color: #000;
+        }
+
+        .os-item .data-badge.future {
+            background: var(--success-color); /* depois de 7 dias */
+        }
+
+        .os-item .descricao {
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        /* Mensagem de Erro */
+        .error {
+            background: #ffebee;
+            color: var(--danger-color);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow);
+            max-width: 500px;
+            margin: 1rem auto;
+        }
+
+        /* Responsividade */
+        @media(max-width:768px) {
+            .capelas-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-section .date-group {
+                width: 100%;
+            }
+
+            .reload-btn {
+                max-width: 100%;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <header>
-    <h1>Sistema de Ordens de Serviço</h1>
-  </header>
-  <main>
-    <div class="capelas-grid" id="propriedades"></div>
-    <div class="reload-section">
-      <button class="reload-btn" onclick="carregarDados()">🔄 Recarregar Dados</button>
-    </div>
-    <div class="os-section" id="listaOS"></div>
-  </main>
+    <header>
+        <h1>Sistema de Ordens de Serviço</h1>
+    </header>
 
-  <script>
-    const spreadsheetId = "1vp45PmYUejX_zQpMWgOMC5AejB7h_wKe4DVPRVrymRU"; // Ex: "1ABC123XYZ" - ID da planilha
-    const apiKey = "AIzaSyBR-kigig741xsyRnllvtKbsxEGBQml0PE"; // Ex: "AIzaSyB...abc123" - Chave da API
-    const range = "Sheet1!A:E"; // Lê colunas A (Capela) a E (Descrição)
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
+    <main>
+        <div class="capelas-grid" id="propriedades"></div>
 
-    async function carregarDados() {
-      const divProps = document.getElementById("propriedades");
-      const divLista = document.getElementById("listaOS");
-      divProps.innerHTML = ''; // Limpa propriedades antigas
-      divLista.innerHTML = `
-        <div class="loading">
-          <div class="spinner"></div>
-          Carregando ordens de serviço...
+        <div class="reload-section">
+            <button class="reload-btn" onclick="carregarDados()">🔄 Recarregar Dados</button>
         </div>
-      `; // Spinner de loading
-      divLista.classList.add('os-section'); // Para animação
-      divLista.style.display = 'block';
 
-      try {
-        const resp = await fetch(url);
-        if (!resp.ok) {
-          const errorData = await resp.json();
-          throw new Error(`Erro HTTP ${resp.status}: ${errorData.error?.message || 'Verifique o ID, API Key e compartilhamento da planilha'}`);
+        <div class="filter-section">
+            <div class="date-group">
+                <label for="dataInicio">Data Inicial:</label>
+                <input type="date" id="dataInicio" onchange="atualizarBotaoFiltrar()">
+            </div>
+            <div class="date-group">
+                <label for="dataFim">Data Final:</label>
+                <input type="date" id="dataFim" onchange="atualizarBotaoFiltrar()">
+            </div>
+            <button class="filter-btn" id="btnFiltrar" onclick="filtrarPorIntervalo()" disabled>📅 Filtrar</button>
+        </div>
+
+        <div class="os-section" id="listaOS"></div>
+    </main>
+
+    <script>
+        // --- INÍCIO: API para data real ---
+        let dataHojeReal = null;
+
+        async function obterDataReal() {
+            try {
+                const res = await fetch("https://worldtimeapi.org/api/ip");
+                const data = await res.json();
+                dataHojeReal = new Date(data.datetime);
+                console.log("Data real obtida:", dataHojeReal.toLocaleString());
+            } catch (err) {
+                console.warn("Erro ao obter hora real, usando hora local:", err);
+                dataHojeReal = new Date(); // fallback local
+            }
         }
-        const response = await resp.json();
-        const values = response.values || []; // Array de linhas [ [cabeçalho], [dados1], ... ]
+        // --- FIM: API para data real ---
 
-        if (values.length < 2) {
-          throw new Error('Planilha vazia ou sem dados (verifique colunas A:E na aba Sheet1: Capela, N° OS, Data de vencimento, Assunto, Descrição)');
+        let allOS = [];
+        let capelas = {};
+
+        const spreadsheetId = "1vp45PmYUejX_zQpMWgOMC5AejB7h_wKe4DVPRVrymRU";
+        const apiKey = "AIzaSyBR-kigig741xsyRnllvtKbsxEGBQml0PE";
+        const range = "Sheet1!A:E";
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
+
+        // Funções de data
+        function parseDataBrasileira(str) {
+            if (!str) return null;
+            const p = str.split('/');
+            if (p.length !== 3) return null;
+            const d = parseInt(p[0]), m = parseInt(p[1]) - 1, y = parseInt(p[2]);
+            const dt = new Date(y, m, d);
+            if (isNaN(dt.getTime())) return null;
+            return dt;
         }
 
-        // Pula cabeçalho (primeira linha) e processa dados
-        const dados = values.slice(1).filter(row => row.length > 0 && row[0]); // Ignora linhas vazias
+        function formatarData(d) {
+            if (!d) return 'Data inválida';
+            return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+        }
 
-        const capelas = {}; // Agrupamento por Capela (coluna A)
-        dados.forEach(row => {
-          const capela = (row[0] || "").trim(); // Coluna A: Capela
-          if (!capela) return; // Ignora se sem capela
-          if (!capelas[capela]) capelas[capela] = [];
-          const dataStr = row[2] || ""; // Coluna C: Data de vencimento
-          const data = dataStr ? new Date(dataStr.split('/').reverse().join('-')) : new Date(); // Assume DD/MM para ordenação
-          const numeroOS = row[1] || ""; // Coluna B: N° OS
-          const assunto = row[3] || ""; // Coluna D: Assunto
-          const descricao = row[4] || ""; // Coluna E: Descrição
-          capelas[capela].push({
-            texto: `${numeroOS} — ${assunto} — ${dataStr} — ${descricao}`, // Formato: N° OS — Assunto — Data — Descrição
-            data: data,
-            dataStr: dataStr // Para badge
-          });
-        });
+        // Normaliza para comparar só a data (sem horas)
+        function getDateOnly(d) {
+            const x = new Date(d);
+            x.setHours(0, 0, 0, 0);
+            return x;
+        }
 
-        // Ordena OS por data de vencimento em cada capela
-        Object.keys(capelas).forEach(cap => {
-          capelas[cap].sort((a, b) => a.data - b.data);
-        });
+        // Retorna classe para badge com base na diferença em dias usando dataHojeReal (obtida pela API)
+        function getBadgeClassForDate(dt) {
+            const hoje = dataHojeReal ? getDateOnly(dataHojeReal) : getDateOnly(new Date());
+            const alvo = getDateOnly(dt);
+            const diff = Math.round((alvo - hoje) / (1000 * 60 * 60 * 24));
+            if (diff < 0) return 'overdue';      // já venceu
+            if (diff === 0) return 'today';      // vence hoje
+            if (diff > 0 && diff <= 7) return 'this-week'; // dentro dos próximos 7 dias
+            return 'future';                     // depois de 7 dias
+        }
 
-        divLista.innerHTML = ''; // Limpa loading
-        montarInterface(capelas);
-      } catch (error) {
-        console.error(error);
-        divLista.innerHTML = `<div class="error">${error.message}<br>Verifique: ID da planilha, API Key válida, planilha pública e colunas corretas (A: Capela, B: N° OS, C: Data, D: Assunto, E: Descrição). Recarregue ou confira o console (F12).</div>`;
-      }
-    }
+        // Helper para renderizar listas de OS de forma consistente.
+        function renderOSList(sorted, title, showCapelaInItem = true) {
+            const div = document.getElementById('listaOS');
+            if (!sorted || !sorted.length) {
+                div.innerHTML = `<h2>${title}</h2><p style="text-align:center;color:#44546b;">Nenhuma OS encontrada.</p>`;
+            } else {
+                div.innerHTML = `<h2>${title}</h2>
+                    <ul class="os-list">
+                        ${sorted.map(os => {
+                            const badgeClass = getBadgeClassForDate(os.dataObj);
+                            return `<li class="os-item">
+                                <strong>${showCapelaInItem ? (os.capela + ' - ') : ''}${os.numeroOS} — ${os.assunto}</strong>
+                                <span class="data-badge ${badgeClass}">${os.dataStr}</span>
+                                <p class="descricao">${os.descricao}</p>
+                            </li>`;
+                        }).join('')}
+                    </ul>`;
+            }
+            div.style.display = 'block';
+            div.scrollIntoView({ behavior: 'smooth' });
+        }
 
-    function montarInterface(capelas) {
-      const divProps = document.getElementById("propriedades");
+        // Carregar dados da planilha
+        async function carregarDados() {
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                const values = data.values || [];
+                if (values.length < 2) throw new Error('Planilha vazia');
 
-      Object.keys(capelas).sort().forEach(nome => { // Ordena capelas alfabeticamente
-        const btn = document.createElement("button");
-        btn.className = "capela-btn";
-        btn.textContent = nome; // Nome da Capela
-        btn.setAttribute('aria-label', `Mostrar ordens de serviço para ${nome}`);
-        btn.onclick = () => mostrarOS(nome, capelas);
-        divProps.appendChild(btn);
-      });
+                allOS = [];
+                capelas = {};
 
-      if (Object.keys(capelas).length === 0) {
-        divProps.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Nenhuma capela encontrada.</p>';
-      }
-    }
+                values.slice(1).forEach(row => {
+                    if (row.length < 5 || !row[0]) return;
+                    const [capela, numeroOS, dataStrRaw, assunto, descricao] = row.map(r => r?.trim() || '');
+                    const dataObj = parseDataBrasileira(dataStrRaw);
+                    if (capela && dataObj) {
+                        allOS.push({ capela, numeroOS, dataObj, dataStr: formatarData(dataObj), assunto, descricao });
+                        if (!capelas[capela]) capelas[capela] = [];
+                        capelas[capela].push({ capela, numeroOS, dataObj, dataStr: formatarData(dataObj), assunto, descricao });
+                    }
+                });
 
-    function mostrarOS(nome, capelas) {
-      const divLista = document.getElementById("listaOS");
-      const ordens = capelas[nome];
-      
-      if (!ordens.length) {
-        divLista.innerHTML = `<h2>${nome}</h2><p style="text-align: center; color: var(--text-secondary);">Sem ordens de serviço registradas no momento.</p>`;
-      } else {
-        divLista.innerHTML = `<h2>${nome} (${ordens.length} OS's)</h2><ul class="os-list">${ordens.map(o => `
-          <li class="os-item">
-            <strong>${o.texto.split(' — ')[0]} — ${o.texto.split(' — ')[1]}</strong>
-            <span class="data-badge">${o.dataStr}</span>
-            <p class="descricao">${o.texto.split(' — ')[3]}</p> <!-- CORREÇÃO: slice(3) para pegar só a descrição (índice 3), sem repetir data -->
-          </li>
-        `).join('')}</ul>`;
-      }
-      divLista.style.display = "block";
-      divLista.scrollIntoView({ behavior: "smooth" }); // Scroll suave para a seção
-    }
+                // Criar select de capelas em vez de vários botões
+                const divProps = document.getElementById('propriedades');
+                divProps.innerHTML = '';
+                const select = document.createElement('select');
+                select.id = 'capelaSelect';
+                select.className = 'capelas-select';
 
-    // Carrega dados na inicialização
-    carregarDados();
-  </script>
+                const optAll = document.createElement('option');
+                optAll.value = '__todas__';
+                optAll.textContent = 'Todas as capelas';
+                select.appendChild(optAll);
+
+                Object.keys(capelas).sort().forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c;
+                    opt.textContent = c;
+                    select.appendChild(opt);
+                });
+
+                select.onchange = () => {
+                    const val = select.value;
+                    if (val === '__todas__') exibirTodasOS();
+                    else exibirOSCapela(val);
+                };
+
+                divProps.appendChild(select);
+
+                exibirTodasOS();
+
+            } catch (err) {
+                document.getElementById('listaOS').innerHTML = `<div class="error">${err.message}</div>`;
+                console.error(err);
+            }
+        }
+
+        function exibirTodasOS() {
+            const div = document.getElementById('listaOS');
+            if (!allOS.length) {
+                div.innerHTML = '<h2>Todas as OSs</h2><p style="text-align:center;color:#44546b;">Nenhuma OS encontrada.</p>';
+                div.style.display = 'block';
+                return;
+            }
+            const sorted = allOS.slice().sort((a, b) => a.dataObj - b.dataObj);
+            renderOSList(sorted, `Todas as OSs (${sorted.length})`, true); // mostrar capela dentro do item quando for "todas"
+        }
+
+        function exibirOSCapela(c) {
+            const osCap = allOS.filter(os => os.capela.toLowerCase() === c.toLowerCase());
+            if (!osCap.length) {
+                const div = document.getElementById('listaOS');
+                div.innerHTML = `<h2>OSs da Capela: ${c}</h2><p style="text-align:center;color:#44546b;">Nenhuma OS encontrada.</p>`;
+                div.style.display = 'block';
+                return;
+            }
+            const sorted = osCap.slice().sort((a, b) => a.dataObj - b.dataObj);
+            // Ao visualizar por capela, não repetir o nome da capela em cada card — o título já mostra.
+            renderOSList(sorted, `OSs da Capela: ${c} (${sorted.length})`, false);
+        }
+
+        function atualizarBotaoFiltrar() {
+            const inicio = document.getElementById('dataInicio').value;
+            const fim = document.getElementById('dataFim').value;
+            document.getElementById('btnFiltrar').disabled = !(inicio && fim);
+        }
+
+        function filtrarPorIntervalo() {
+            const inicioStr = document.getElementById('dataInicio').value;
+            const fimStr = document.getElementById('dataFim').value;
+            if (!inicioStr || !fimStr) return;
+
+            const dataInicio = new Date(inicioStr);
+            const dataFim = new Date(fimStr);
+
+            const filtradas = allOS.filter(os => os.dataObj >= dataInicio && os.dataObj <= dataFim);
+
+            // Decidir se deve mostrar o nome da capela dentro do item:
+            // se houver um filtro de capela selecionado, já mostramos no título, então omitimos dentro do card.
+            const capelaSelect = document.getElementById('capelaSelect');
+            const selectedCapela = capelaSelect ? capelaSelect.value : '__todas__';
+            const showCapelaInItem = (selectedCapela === '__todas__');
+
+            if (!filtradas.length) {
+                const div = document.getElementById('listaOS');
+                div.innerHTML = `<h2>OSs entre ${formatarData(dataInicio)} e ${formatarData(dataFim)}</h2>
+                    <p style="text-align:center;color:#44546b;">Nenhuma OS encontrada nesse intervalo.</p>`;
+                div.style.display = 'block';
+            } else {
+                const sorted = filtradas.slice().sort((a, b) => a.dataObj - b.dataObj);
+                renderOSList(sorted, `OSs entre ${formatarData(dataInicio)} e ${formatarData(dataFim)} (${sorted.length})`, showCapelaInItem);
+            }
+        }
+
+        window.onload = async () => {
+            await obterDataReal(); // primeiro busca a data real
+            carregarDados();       // depois carrega o resto do sistema
+        };
+    </script>
 </body>
+
 </html>
