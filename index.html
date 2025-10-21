@@ -4,21 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Ordens de Serviço - Facilities</title>
+    <title>OrdemFácil</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <link rel="icon" type="image/x-icon" href="maintenance.png">
     <style>
         :root {
             --primary-color: #0d47a1;
-            --accent-color: #1976d2;
+            /* Azul Escuro (Principal) */
+            --accent-color: #04a48c;
+            /* Verde Água (Ação) */
             --success-color: #4caf50;
             --danger-color: #ef5350;
-            --bg-color: #e3f2fd;
+            --bg-color: #f0f4f7;
+            /* Fundo mais claro */
             --card-bg: #ffffff;
-            --text-primary: #0d1b2a;
+            --text-primary: #1a237e;
+            /* Azul Escuro quase preto */
             --text-secondary: #44546b;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow: 0 4px 12px rgba(11, 32, 70, 0.08);
+            /* Sombra mais sutil */
             --border-radius: 14px;
-            --transition: all 0.3s ease;
+            --transition: all 0.28s cubic-bezier(.2, .9, .3, 1);
+            --card-padding: 1rem;
+            --muted: rgba(13, 71, 161, 0.06);
+            /* Cor de destaque para o header ativo */
+            --header-active-color: rgba(255, 255, 255, 0.2);
         }
 
         * {
@@ -29,126 +44,164 @@
             font-family: 'Roboto', sans-serif;
             background: var(--bg-color);
             margin: 0;
-            padding: 0;
+            padding: 0 0 1rem 0;
+            /* Espaço inferior ajustado */
             color: var(--text-primary);
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        header {
+        /* ----------------------------------- */
+        /* Novo Header Mobile Aprimorado (MANTIDO) */
+        /* ----------------------------------- */
+        .app-header {
+            /* MUDANÇA: Fundo alterado para o azul principal */
             background: var(--primary-color);
-            color: white;
-            padding: 1rem;
-            text-align: center;
+            /* MUDANÇA: Cor do texto e ícones do header agora é branco */
+            color: var(--card-bg);
+            padding: 0.8rem 1rem;
             position: sticky;
             top: 0;
-            z-index: 10;
-            border-bottom-left-radius: var(--border-radius);
-            border-bottom-right-radius: var(--border-radius);
+            /* CORREÇÃO DE Z-INDEX: Aumentado para garantir que fique acima do dropdown (z-index: 50) */
+            z-index: 100;
+            /* Sombra sutil padrão da aplicação (baseada em azul) */
             box-shadow: var(--shadow);
-        }
-
-        header h1 {
-            margin: 0;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 1.6rem;
         }
 
-        header::before {
-            content: "📋";
-            font-size: 1.8rem;
+
+        .app-header h2 {
+            margin: 0;
+            font-size: 2.10rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            /* Adicionado um ajuste para que o título ocupe o espaço central */
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        /* ESTILO NOVO: Botão de Recarregar como Ícone no Header */
+        .app-header .header-reload-btn {
+            /* Cor de fundo sutil, mas pode ser transparente para ícone puro */
+            background: transparent;
+            /* MUDANÇA: Cor do Ícone para branco */
+            color: var(--card-bg);
+            border: none;
+            /* Transforma em círculo (para o ícone) */
+            border-radius: 50%;
+            padding: 0.2rem;
+            /* Aumenta a área de toque */
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            font-weight: 500;
+            font-size: 1.7rem;
+            /* Tamanho do ícone igual ao logout */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            /* Garante que seja um círculo uniforme */
+            height: 44px;
+        }
+
+        /* Ajuste do ícone dentro do botão */
+        .app-header .header-reload-btn .material-icons-outlined {
+            font-size: 1.7rem;
+        }
+
+        .app-header .header-reload-btn:active {
+            /* MUDANÇA: Cor de clique sutil no header azul */
+            background-color: var(--header-active-color);
+            transform: translateY(1px);
+        }
+
+        /* Fim dos ajustes do botão de recarregar */
+
+
+        .app-header .logout-icon {
+            font-size: 1.7rem;
+            cursor: pointer;
+            padding: 0.2rem;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+            /* Garantindo que o ícone de logout fique no tamanho certo */
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* MUDANÇA: Cor do Ícone para branco */
+            color: var(--card-bg);
+        }
+
+        .app-header .logout-icon:active {
+            /* MUDANÇA: Cor de clique sutil no header azul */
+            background-color: var(--header-active-color);
+        }
+
+        /* Título 'OrdemFácil' (melhor posicionado fora do header sticky) */
+        .titulo-ordemfacil {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            text-align: center;
+            /* AJUSTE: Cor do título agora é branco para contraste */
+            color: var(--card-bg);
+            letter-spacing: 0.5px;
+            margin: 0;
+            /* Removido margem superior e inferior para ficar no header */
+        }
+
+        .titulo-ordemfacil span {
+            /* O gradiente verde/água está mantido aqui para o 'Fácil', mas agora sobre um fundo azul */
+            color: var(--accent-color);
+            background: linear-gradient(90deg, #04a48c, #00e6c3);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         main {
             max-width: 1200px;
-            margin: 1rem auto;
-            padding: 1rem;
+            margin: 0 auto;
+            padding: 0 1rem;
         }
 
-        /* Grid / Select de Capelas */
-        .capelas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
+        /* ----------------------------------- */
+        /* Filtro e Seleção */
+        /* ----------------------------------- */
 
-        .capela-btn {
-            background: var(--card-bg);
-            border: 2px solid #bbdefb;
-            border-radius: var(--border-radius);
-            padding: 1.25rem 1rem;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            box-shadow: var(--shadow);
-            text-align: center;
+        /* Contêiner flexível para Recarregar e Multi-select */
+        .controls-top {
             display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
             justify-content: center;
             align-items: center;
-            transition: var(--transition);
+            margin-bottom: 1.5rem;
+            /* ADICIONADO: Espaçamento entre o Header e este bloco */
+            margin-top: 1.5rem;
         }
 
-        .capela-btn:hover,
-        .capela-btn:focus {
-            background: var(--accent-color);
-            color: white;
-            transform: translateY(-2px);
+        .multi-select {
+            position: relative;
+            flex: 1 1 200px;
+            max-width: 560px;
+            /* Z-index mantido para o contêiner do dropdown */
+            z-index: 10;
         }
 
-        /* Estilo do select de capelas */
-        .capelas-select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border-radius: var(--border-radius);
-            border: 2px solid #bbdefb;
-            background: var(--card-bg);
-            font-size: 1rem;
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            transition: var(--transition);
-        }
 
-        .capelas-select:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            transform: translateY(-2px);
-        }
-
-        /* Botão Recarregar */
-        .reload-section {
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-
-        .reload-btn {
-            background: var(--success-color);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 0.75rem 2rem;
-            cursor: pointer;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            width: 100%;
-            max-width: 250px;
-        }
-
-        .reload-btn:hover,
-        .reload-btn:focus {
-            background: #388e3c;
-        }
-
-        /* Filtro por Data */
         .filter-section {
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-end;
             gap: 0.75rem;
             flex-wrap: wrap;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .filter-section .date-group {
@@ -156,40 +209,100 @@
             flex-direction: column;
             gap: 0.25rem;
             width: 150px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
         }
 
         .filter-section input[type="date"] {
-            padding: 0.5rem;
-            border-radius: var(--border-radius);
-            border: 1px solid #90caf9;
+            padding: 0.6rem 0.8rem;
+            border-radius: 10px;
+            border: 1px solid #c5d0db;
+            background: var(--card-bg);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
         .filter-btn {
+            /* Cor do botão Filtrar (Verde Água - Mantido) */
             background: var(--accent-color);
             color: white;
             border: none;
-            border-radius: var(--border-radius);
-            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            padding: 0.7rem 1.5rem;
             cursor: pointer;
-            box-shadow: var(--shadow);
+            /* Sombra ajustada para o verde-água */
+            box-shadow: 0 4px 8px rgba(4, 164, 140, 0.3);
             transition: var(--transition);
+            font-weight: 700;
         }
 
         .filter-btn:disabled {
-            background: #90a4ae;
+            background: #007B83;
             cursor: not-allowed;
+            box-shadow: none;
         }
 
-        /* Lista de OS */
-        .os-section {
+        .filter-btn:active:not(:disabled) {
+            /* Cor de clique ajustada para um verde-água mais escuro */
+            background: #00897b;
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        /* ----------------------------------- */
+        /* Multi-select / Dropdown (Capelas) */
+        /* ----------------------------------- */
+
+        .capelas-select {
+            width: 100%;
+            padding: 1rem 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(13, 71, 161, 0.08);
+            background: var(--card-bg);
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.6rem;
+            font-weight: 500;
+        }
+
+        .capelas-select:active {
+            background-color: var(--muted);
+            box-shadow: none;
+            transform: translateY(1px);
+        }
+
+        .dropdown-content {
             display: none;
-            animation: fadeIn 0.4s ease;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: var(--card-bg);
+            box-shadow: 0 10px 30px rgba(11, 32, 70, 0.15);
+            border-radius: 10px;
+            padding: 0.8rem;
+            min-width: 240px;
+            max-width: 420px;
+            width: 100%;
+            /* Garante que o dropdown se expanda na largura do multi-select */
+            z-index: 50;
+            /* Z-index menor que 100 do header */
+            border: 1px solid rgba(13, 71, 161, 0.08);
         }
 
-        @keyframes fadeIn {
+        .dropdown-content.show {
+            display: block;
+            animation: slideInTop 0.2s ease-out;
+        }
+
+        @keyframes slideInTop {
             from {
                 opacity: 0;
-                transform: translateY(10px);
+                transform: translateY(-10px);
             }
 
             to {
@@ -198,10 +311,87 @@
             }
         }
 
-        .os-section h2 {
-            text-align: center;
-            color: var(--primary-color);
+        .checkbox-list {
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+            /* Espaço para a barra de rolagem */
+            margin-bottom: 0.7rem;
+            border-bottom: 1px solid #eceff1;
+            padding-bottom: 0.5rem;
+        }
+
+        .checkbox-list label {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            padding: 0.4rem 0.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.15s;
+        }
+
+        .checkbox-list label:hover {
+            background-color: var(--muted);
+        }
+
+        .checkbox-list input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+        }
+
+        .dropdown-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: space-between;
+        }
+
+        .dropdown-actions button {
+            flex: 1 1 0;
+            padding: 0.6rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        #okBtn {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        #okBtn:active {
+            background: #00897b;
+        }
+
+        #clearBtn {
+            /* MUDANÇA: Cor do botão Limpar (Clear) alterada de cinza para o azul principal */
+            background: var(--primary-color);
+            color: white;
+        }
+
+        #clearBtn:active {
+            /* Cor de clique ajustada para um azul mais escuro */
+            background: #0a3a82;
+        }
+
+        /* ----------------------------------- */
+        /* Card OS aprimorado */
+        /* ----------------------------------- */
+
+        .os-section {
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* NOVO ESTILO: Alinhamento do Título da Lista de OS (Adicionado para melhor responsividade) */
+        .os-list-title {
+            font-size: 1.4rem;
+            text-align: left;
             margin-bottom: 1rem;
+            color: var(--text-primary);
+            padding-left: 0; /* Alinha com o padding lateral de 'main' */
         }
 
         .os-list {
@@ -209,140 +399,448 @@
             padding: 0;
             display: grid;
             gap: 1rem;
+            grid-template-columns: 1fr;
+            /* Forçar coluna única no mobile */
         }
 
         .os-item {
             background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 1rem;
+            border-radius: 12px;
+            padding: var(--card-padding);
             box-shadow: var(--shadow);
+            border-left: 6px solid var(--accent-color);
+            transition: transform 0.25s var(--transition), box-shadow 0.25s var(--transition), border-color 0.25s var(--transition);
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
-            border-left: 4px solid var(--accent-color);
+            gap: 0.8rem;
+            min-height: 80px;
+        }
+
+        .os-item:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 8px rgba(11, 32, 70, 0.06);
+        }
+
+        .os-item-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .os-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.3rem;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(11, 32, 70, 0.1);
         }
 
         .os-item strong {
             color: var(--primary-color);
+            display: block;
+            font-size: 1rem;
+            font-weight: 700;
+            word-break: break-word;
+            line-height: 1.3;
+        }
+
+        .os-meta {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            flex-wrap: wrap;
+        }
+
+        .os-meta .chip {
+            background: var(--muted);
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-weight: 600;
+            color: var(--primary-color);
+            border: 1px solid rgba(13, 71, 161, 0.04);
+            font-size: 0.8rem;
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 0.6rem;
+            margin-top: 0.4rem;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .os-item .data-badge {
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 20px;
+            padding: 0.3rem 0.7rem;
+            border-radius: 999px;
             font-size: 0.85rem;
-            width: fit-content;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .os-item .data-badge.overdue {
-            background: var(--danger-color); /* data anterior a hoje */
+        .days-note {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 8px;
+            background: #e3f2fd;
+            /* Fundo sutil */
         }
 
-        .os-item .data-badge.today {
-            background: #ff9800; /* hoje */
-        }
-
-        .os-item .data-badge.this-week {
-            background: #fdd835; /* dentro dos próximos 7 dias */
-            color: #000;
-        }
-
-        .os-item .data-badge.future {
-            background: var(--success-color); /* depois de 7 dias */
+        .days-note.backlog {
+            color: var(--danger-color);
+            font-weight: 800;
+            background: #ffebee;
         }
 
         .os-item .descricao {
             font-style: italic;
             color: var(--text-secondary);
+            margin: 0;
+            background: #f5f7f9;
+            padding: 0.7rem 1rem;
+            border-radius: 10px;
+            line-height: 1.4;
+            font-size: 0.9rem;
+            word-break: break-word;
         }
 
-        /* Mensagem de Erro */
-        .error {
-            background: #ffebee;
-            color: var(--danger-color);
-            padding: 1rem;
-            border-radius: var(--border-radius);
-            text-align: center;
-            box-shadow: var(--shadow);
-            max-width: 500px;
-            margin: 1rem auto;
+        /* ----------------------------------- */
+        /* Estilos de Status (Manter) */
+        /* ----------------------------------- */
+
+        .os-avatar.overdue {
+            background: linear-gradient(135deg, #ef5350, #e53935);
         }
 
-        /* Responsividade */
-        @media(max-width:768px) {
-            .capelas-grid {
+        .os-avatar.today {
+            background: linear-gradient(135deg, #fb8c00, #ffb74d);
+        }
+
+        .os-avatar.this-week {
+            background: linear-gradient(135deg, #fdd835, #ffeb3b);
+            color: #000;
+        }
+
+        .os-avatar.future {
+            background: linear-gradient(135deg, #4caf50, #43a047);
+        }
+
+        .os-item.overdue {
+            border-left-color: #ef5350;
+        }
+
+        .os-item.today {
+            border-left-color: #fb8c00;
+        }
+
+        .os-item.this-week {
+            border-left-color: #fdd835;
+        }
+
+        .os-item.future {
+            border-left-color: #4caf50;
+        }
+
+        .os-item .data-badge.overdue {
+            background: linear-gradient(90deg, #ef5350, #e53935);
+        }
+
+        .os-item .data-badge.today {
+            background: linear-gradient(90deg, #fb8c00, #ffb74d);
+        }
+
+        .os-item .data-badge.this-week {
+            background: linear-gradient(90deg, #fdd835, #ffeb3b);
+            color: #000;
+        }
+
+        .os-item .data-badge.future {
+            background: linear-gradient(90deg, #4caf50, #43a047);
+        }
+
+        /* Oculta o marcador de bolinha nos badges (melhor visual) */
+        .os-item .data-badge::before {
+            content: none;
+        }
+
+        /* ----------------------------------- */
+        /* Responsividade (Ajustes Finais) */
+        /* ----------------------------------- */
+
+        @media (min-width: 701px) {
+            .os-list {
+                /* ALTERAÇÃO: Força uma única coluna (1fr) para que cada card ocupe a linha inteira */
                 grid-template-columns: 1fr;
+                max-width: 800px; /* Adiciona uma largura máxima razoável */
+                margin: 0 auto; /* Centraliza a lista de OS */
+            }
+
+            .controls-top {
+                max-width: 800px; /* Alinha o filtro e multi-select com a lista de OS */
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            /* Garante que o título se alinhe perfeitamente com a lista e os controles centralizados */
+            .os-list-title {
+                max-width: 800px; /* Mesma largura da lista e controles */
+                margin-left: auto;
+                margin-right: auto;
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            main {
+                max-width: 1200px; /* Mantém o max-width do container principal */
+                margin: 0 auto;
+                padding: 0 2rem; /* Ajusta o padding lateral para telas maiores */
+            }
+        }
+
+        @media (max-width: 450px) {
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
             }
 
             .filter-section .date-group {
                 width: 100%;
             }
 
-            .reload-btn {
-                max-width: 100%;
+            .filter-btn {
+                width: 100%;
+            }
+
+            /* Garante que os dois elementos do controls-top tenham 100% no mobile */
+            .controls-top {
+                flex-direction: column;
+            }
+
+            .multi-select {
+                width: 100%;
+                flex: none;
             }
         }
+
+        /* Estilo para garantir que o conteúdo do app não apareça antes do login */
+        .app-content {
+            /* Esconde todo o conteúdo principal até o login */
+            display: none;
+        }
     </style>
+
 </head>
 
 <body>
-    <header>
-        <h1>Sistema de Ordens de Serviço</h1>
-    </header>
 
-    <main>
-        <div class="capelas-grid" id="propriedades"></div>
+    <div id="loginScreen"
+        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f0f4f7; z-index: 1000; display: flex; justify-content: center; align-items: center;">
+        <form id="loginForm"
+            style="background: white; padding: 2rem; border-radius: 14px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); width: 90%; max-width: 350px; text-align: center; border: 1px solid #ddd;">
+            <h2 style="color: var(--primary-color); font-size: 1.5rem; margin-bottom: 1.5rem;">Login OrdemFácil</h2>
+            <p style="margin-bottom: 1rem; color: var(--text-secondary); font-size: 0.9rem;">Use E-mail e Senha para
+                acessar.</p>
 
-        <div class="reload-section">
-            <button class="reload-btn" onclick="carregarDados()">🔄 Recarregar Dados</button>
+            <input type="email" id="loginEmail" placeholder="E-mail" required
+                autocomplete="username"
+                style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+            <input type="password" id="loginPassword" placeholder="Senha (mín. 6 caracteres)" required
+                autocomplete="current-password"
+                style="width: 100%; padding: 0.75rem; margin-bottom: 1.5rem; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+
+            <button type="submit" id="signInBtn"
+                style="background: var(--primary-color); color: white; border: none; padding: 0.8rem; border-radius: 10px; width: 100%; font-weight: bold; margin-bottom: 0.5rem; cursor: pointer; transition: background 0.3s;">Entrar</button>
+
+            <p id="authMessage"
+                style="color: var(--danger-color); margin-top: 1rem; font-weight: bold; min-height: 20px;"></p>
+        </form>
+    </div>
+    <div id="newOsModal"
+        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 1rem;">
+        <div
+            style="background: white; padding: 1.5rem; border-radius: 14px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); width: 100%; max-width: 400px;">
+            <h2
+                style="color: var(--primary-color); font-size: 1.4rem; margin-bottom: 1.2rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">
+                Criar Nova Ordem de Serviço</h2>
+
+            <form id="newOsForm">
+                <input type="text" id="osCapela" placeholder="Capela (ex: Capela A)" required
+                    style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+
+                <input type="text" id="osNumero" placeholder="Número da OS" required
+                    style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+
+                <input type="text" id="osAssunto" placeholder="Assunto Principal" required
+                    style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+
+                <textarea id="osDescricao" placeholder="Descrição Detalhada (Opcional)" rows="3"
+                    style="width: 100%; padding: 0.75rem; margin-bottom: 1.5rem; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; resize: vertical;"></textarea>
+
+                <p id="osVencimentoInfo" style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                    Vencimento padrão: **30 dias**. Data atual: <span id="currentDateDisplay"></span>
+                </p>
+
+                <button type="submit" id="saveOsBtn"
+                    style="background: var(--accent-color); color: white; border: none; padding: 0.8rem; border-radius: 10px; width: 100%; font-weight: bold; margin-bottom: 0.5rem; cursor: pointer; transition: background 0.3s;">Salvar
+                    OS</button>
+                <button type="button" onclick="document.getElementById('newOsModal').style.display='none'"
+                    style="background: #e0e0e0; color: var(--text-primary); border: none; padding: 0.8rem; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; transition: background 0.3s;">Cancelar</button>
+
+                <p id="osMessage"
+                    style="color: var(--danger-color); margin-top: 1rem; font-weight: bold; min-height: 20px;"></p>
+            </form>
         </div>
+    </div>
+    <div id="appContent" class="app-content">
+        <header class="app-header">
+            <button class="header-reload-btn" onclick="carregarDados()" title="Recarregar Dados">
+                <span class="material-icons-outlined">refresh</span>
+            </button>
+            <h2 class="titulo-ordemfacil">Ordem<span>Fácil</span></h2>
+            <span class="material-icons-outlined logout-icon" onclick="auth.signOut()"
+                title="Sair do Sistema">logout</span>
+        </header>
 
-        <div class="filter-section">
-            <div class="date-group">
-                <label for="dataInicio">Data Inicial:</label>
-                <input type="date" id="dataInicio" onchange="atualizarBotaoFiltrar()">
+
+
+        <main>
+            <div class="controls-top">
+                <div class="capelas-grid" id="propriedades">
+                </div>
             </div>
-            <div class="date-group">
-                <label for="dataFim">Data Final:</label>
-                <input type="date" id="dataFim" onchange="atualizarBotaoFiltrar()">
+
+            <div class="filter-section">
+                <div class="date-group">
+                    <label for="dataInicio">Data Inicial:</label>
+                    <input type="date" id="dataInicio" onchange="atualizarBotaoFiltrar()">
+                </div>
+                <div class="date-group">
+                    <label for="dataFim">Data Final:</label>
+                    <input type="date" id="dataFim" onchange="atualizarBotaoFiltrar()">
+                </div>
+                <button class="filter-btn" id="btnFiltrar" onclick="filtrarPorIntervalo()" disabled>
+                    <span class="material-icons-outlined" style="font-size: 1.2rem;">filter_list</span> Filtrar
+                </button>
             </div>
-            <button class="filter-btn" id="btnFiltrar" onclick="filtrarPorIntervalo()" disabled>📅 Filtrar</button>
-        </div>
 
-        <div class="os-section" id="listaOS"></div>
-    </main>
+            <div class="os-section" id="listaOS">
+                <p style="text-align:center;color:#44546b;margin-top:2rem;">Faça login para ver as Ordens de Serviço.
+                </p>
+            </div>
+        </main>
 
+    </div>
     <script>
-        // --- INÍCIO: API para data real ---
-        let dataHojeReal = null;
+        // 2. ADICIONE SUAS CHAVES DO FIREBASE AQUI
+        // ESTAS SÃO AS CHAVES QUE VOCÊ FORNECEU
+        const firebaseConfig = {
+            apiKey: "AIzaSyDiha5SbJkPs7llL-Lc_xJwVaolh1tbL1s",
+            authDomain: "ordemfacil-os.firebaseapp.com",
+            projectId: "ordemfacil-os",
+            storageBucket: "ordemfacil-os.firebasestorage.app",
+            messagingSenderId: "77742432201",
+            appId: "1:77742432201:web:52f52be87d794981ba9218",
+            measurementId: "G-J792QTZ3FK"
+        };
 
-        async function obterDataReal() {
-            try {
-                const res = await fetch("https://worldtimeapi.org/api/ip");
-                const data = await res.json();
-                dataHojeReal = new Date(data.datetime);
-                console.log("Data real obtida:", dataHojeReal.toLocaleString());
-            } catch (err) {
-                console.warn("Erro ao obter hora real, usando hora local:", err);
-                dataHojeReal = new Date(); // fallback local
-            }
-        }
-        // --- FIM: API para data real ---
+        // 3. Inicializa o Firebase e a Autenticação
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        //-----------------------------------------
+
+        // --- INÍCIO: Variáveis Globais e Funções de Segurança ---
 
         let allOS = [];
         let capelas = {};
+        let dataHojeReal = null;
 
+        // API do Google Sheets (SUA PLANILHA)
         const spreadsheetId = "1vp45PmYUejX_zQpMWgOMC5AejB7h_wKe4DVPRVrymRU";
-        const apiKey = "AIzaSyBR-kigig741xsyRnllvtKbsxEGBQml0PE";
+        // ATENÇÃO: Use a chave de API DO GOOGLE CLOUD para acesso à planilha!
+        const apiKeySheets = "AIzaSyBR-kigig741xsyRnllvtKbsxEGBQml0PE";
+        const appScriptUrl = "SUA_APPS_SCRIPT_URL_DE_DEPLOYMENT";
         const range = "Sheet1!A:E";
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKey}`;
+        // ⚠️ Otimização 1: A URL de busca dos dados é definida uma única vez, fora das funções de carregamento
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${apiKeySheets}`;
 
-        // Funções de data
+        // --- Funções de Segurança (Controle de Login) ---
+        function esconderLogin() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appContent').style.display = 'block';
+        }
+
+        function mostrarLogin() {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('appContent').style.display = 'none';
+            document.getElementById('listaOS').innerHTML = '<p style="text-align:center;color:#44546b;margin-top:2rem;">Faça login para ver as Ordens de Serviço.</p>';
+        }
+
+        // Função principal de Login
+        const performLogin = async () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const message = document.getElementById('authMessage');
+            message.textContent = "";
+
+            try {
+                // Tenta fazer o login
+                await auth.signInWithEmailAndPassword(email, password);
+                message.textContent = "✅ Login efetuado com sucesso!";
+            } catch (error) {
+                message.textContent = "❌ Erro no login. Verifique e-mail/senha.";
+            }
+        };
+
+
+        // MODIFICAÇÃO 2: Adiciona o evento de submit para o formulário de login (permite usar a tecla Enter)
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault(); // Impede o envio tradicional do formulário
+            performLogin();
+        });
+
+        // O evento de clique do botão é mantido por segurança e acessibilidade
+        document.getElementById('signInBtn').addEventListener('click', performLogin);
+
+
+        // Verifica o Status do Login (Onde a Mágica Acontece!)
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // Se o usuário está logado:
+                esconderLogin();
+                obterDataReal().then(carregarDados);
+            } else {
+                // Se ninguém está logado:
+                mostrarLogin();
+            }
+        });
+
+        // --- FIM: Funções de Segurança ---
+
+
+        // --- INÍCIO: Funções de Data (mantidas) ---
+        async function obterDataReal() {
+            // Pode ser simplificado para new Date() se não precisar de servidor externo
+            dataHojeReal = new Date();
+        }
+
         function parseDataBrasileira(str) {
             if (!str) return null;
             const p = str.split('/');
             if (p.length !== 3) return null;
-            const d = parseInt(p[0]), m = parseInt(p[1]) - 1, y = parseInt(p[2]);
+            const d = parseInt(p[0]),
+                m = parseInt(p[1]) - 1,
+                y = parseInt(p[2]);
             const dt = new Date(y, m, d);
             if (isNaN(dt.getTime())) return null;
             return dt;
@@ -353,164 +851,271 @@
             return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
         }
 
-        // Normaliza para comparar só a data (sem horas)
         function getDateOnly(d) {
             const x = new Date(d);
             x.setHours(0, 0, 0, 0);
             return x;
         }
 
-        // Retorna classe para badge com base na diferença em dias usando dataHojeReal (obtida pela API)
         function getBadgeClassForDate(dt) {
             const hoje = dataHojeReal ? getDateOnly(dataHojeReal) : getDateOnly(new Date());
             const alvo = getDateOnly(dt);
             const diff = Math.round((alvo - hoje) / (1000 * 60 * 60 * 24));
-            if (diff < 0) return 'overdue';      // já venceu
-            if (diff === 0) return 'today';      // vence hoje
-            if (diff > 0 && diff <= 7) return 'this-week'; // dentro dos próximos 7 dias
-            return 'future';                     // depois de 7 dias
+            if (diff < 0) return 'overdue';
+            if (diff === 0) return 'today';
+            if (diff > 0 && diff <= 7) return 'this-week';
+            return 'future';
         }
 
-        // Helper para renderizar listas de OS de forma consistente.
+        function getDaysDiff(dt) {
+            const hoje = dataHojeReal ? getDateOnly(dataHojeReal) : getDateOnly(new Date());
+            const alvo = getDateOnly(dt);
+            return Math.round((alvo - hoje) / (1000 * 60 * 60 * 24));
+        }
+        // --- FIM: Funções de Data ---
+
+
+        // --- INÍCIO: Funções de Carregamento e Filtro (Corrigidas e Mantidas) ---
         function renderOSList(sorted, title, showCapelaInItem = true) {
             const div = document.getElementById('listaOS');
             if (!sorted || !sorted.length) {
-                div.innerHTML = `<h2>${title}</h2><p style="text-align:center;color:#44546b;">Nenhuma OS encontrada.</p>`;
+                // ALTERAÇÃO: Usa a classe do novo CSS para o título
+                div.innerHTML = `<h2 class="os-list-title">${title}</h2><p style="text-align:center;color:#44546b;padding:2rem 0;">Nenhuma OS encontrada.</p>`;
             } else {
-                div.innerHTML = `<h2>${title}</h2>
-                    <ul class="os-list">
-                        ${sorted.map(os => {
-                            const badgeClass = getBadgeClassForDate(os.dataObj);
-                            return `<li class="os-item">
-                                <strong>${showCapelaInItem ? (os.capela + ' - ') : ''}${os.numeroOS} — ${os.assunto}</strong>
-                                <span class="data-badge ${badgeClass}">${os.dataStr}</span>
-                                <p class="descricao">${os.descricao}</p>
-                            </li>`;
-                        }).join('')}
-                    </ul>`;
+                // ALTERAÇÃO: Usa a classe do novo CSS para o título, removendo o estilo inline
+                div.innerHTML = `<h2 class="os-list-title">${title} (${sorted.length} OS)</h2>
+                <ul class="os-list">
+                ${sorted.map(os => {
+                    const badgeClass = getBadgeClassForDate(os.dataObj);
+                    const daysDiff = getDaysDiff(os.dataObj);
+                    let daysText = '';
+                    let daysClass = '';
+                    if (daysDiff < 0) {
+                        daysText = `Venceu há ${Math.abs(daysDiff)} dia(s)`;
+                        daysClass = 'backlog';
+                    } else if (daysDiff === 0) {
+                        daysText = 'VENCE HOJE';
+                    } else if (daysDiff === 1) {
+                        daysText = 'Falta 1 dia';
+                    } else {
+                        daysText = `Faltam ${daysDiff} dias`;
+                    }
+
+                    const icon = badgeClass === 'overdue' ? 'error' :
+                        badgeClass === 'today' ? 'warning' :
+                            badgeClass === 'this-week' ? 'schedule' : 'check_circle';
+
+                    const capelaChip = showCapelaInItem ? `<span class="chip">${os.capela}</span>` : '';
+                    const osChip = `<span class="chip">OS: ${os.numeroOS}</span>`;
+
+                    return `<li class="os-item ${badgeClass}">
+                        <div class="os-item-header">
+                            <div class="os-avatar ${badgeClass}" aria-hidden="true">
+                                <span class="material-icons-outlined" style="font-size: 1.4rem;">${icon}</span>
+                            </div>
+                            <div class="left" style="flex:1 1 auto;min-width:0;">
+                                <strong>${os.assunto || 'Sem assunto'}</strong>
+                                <div class="os-meta">
+                                    ${capelaChip}
+                                    ${osChip}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="badge-row">
+                            <span class="data-badge ${badgeClass}">${os.dataStr}</span>
+                            <span class="days-note ${daysClass}">${daysText}</span>
+                        </div>
+
+                        ${os.descricao ? `<p class="descricao">${os.descricao}</p>` : ''}
+                        </li>`;
+                }).join('')}
+                </ul>`;
             }
             div.style.display = 'block';
-            div.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Carregar dados da planilha
         async function carregarDados() {
+            document.getElementById('listaOS').innerHTML = '<p style="text-align:center;color:#44546b;margin-top:2rem;">Carregando Ordens de Serviço...</p>';
+
             try {
+                // Se o usuário não estiver logado, sai da função
+                if (!auth.currentUser) {
+                    mostrarLogin();
+                    return;
+                }
+
+                // Uso de fetch API.
                 const res = await fetch(url);
+                if (!res.ok) throw new Error(`Falha ao carregar dados: ${res.statusText}`);
                 const data = await res.json();
                 const values = data.values || [];
-                if (values.length < 2) throw new Error('Planilha vazia');
+
+                if (values.length < 2) throw new Error('Planilha vazia ou sem dados de OS.');
 
                 allOS = [];
                 capelas = {};
 
+                // Processamento de dados
                 values.slice(1).forEach(row => {
                     if (row.length < 5 || !row[0]) return;
                     const [capela, numeroOS, dataStrRaw, assunto, descricao] = row.map(r => r?.trim() || '');
                     const dataObj = parseDataBrasileira(dataStrRaw);
+                    // Filtra dados inválidos (sem capela ou data) antes de adicionar ao array principal
                     if (capela && dataObj) {
-                        allOS.push({ capela, numeroOS, dataObj, dataStr: formatarData(dataObj), assunto, descricao });
+                        const osData = {
+                            capela,
+                            numeroOS,
+                            dataObj,
+                            dataStr: formatarData(dataObj),
+                            assunto,
+                            descricao
+                        };
+                        allOS.push(osData);
                         if (!capelas[capela]) capelas[capela] = [];
-                        capelas[capela].push({ capela, numeroOS, dataObj, dataStr: formatarData(dataObj), assunto, descricao });
+                        capelas[capela].push(osData);
                     }
                 });
 
-                // Criar select de capelas em vez de vários botões
-                const divProps = document.getElementById('propriedades');
-                divProps.innerHTML = '';
-                const select = document.createElement('select');
-                select.id = 'capelaSelect';
-                select.className = 'capelas-select';
-
-                const optAll = document.createElement('option');
-                optAll.value = '__todas__';
-                optAll.textContent = 'Todas as capelas';
-                select.appendChild(optAll);
-
-                Object.keys(capelas).sort().forEach(c => {
-                    const opt = document.createElement('option');
-                    opt.value = c;
-                    opt.textContent = c;
-                    select.appendChild(opt);
-                });
-
-                select.onchange = () => {
-                    const val = select.value;
-                    if (val === '__todas__') exibirTodasOS();
-                    else exibirOSCapela(val);
-                };
-
-                divProps.appendChild(select);
-
+                // Renderização do menu de capelas e chamada para exibição inicial
+                renderizarMenuCapelas();
                 exibirTodasOS();
 
             } catch (err) {
-                document.getElementById('listaOS').innerHTML = `<div class="error">${err.message}</div>`;
-                console.error(err);
+                document.getElementById('listaOS').innerHTML = `<div class="error" style="margin-top:2rem;color:var(--danger-color);text-align:center;">
+                    <span class="material-icons-outlined" style="font-size: 2rem;">cloud_off</span>
+                    <p>Erro ao buscar dados da planilha: ${err.message}. Verifique a API Key e as permissões!</p>
+                </div>`;
             }
         }
 
-        function exibirTodasOS() {
-            const div = document.getElementById('listaOS');
-            if (!allOS.length) {
-                div.innerHTML = '<h2>Todas as OSs</h2><p style="text-align:center;color:#44546b;">Nenhuma OS encontrada.</p>';
-                div.style.display = 'block';
-                return;
-            }
-            const sorted = allOS.slice().sort((a, b) => a.dataObj - b.dataObj);
-            renderOSList(sorted, `Todas as OSs (${sorted.length})`, true); // mostrar capela dentro do item quando for "todas"
-        }
-
-        function exibirOSCapela(c) {
-            const osCap = allOS.filter(os => os.capela.toLowerCase() === c.toLowerCase());
-            if (!osCap.length) {
-                const div = document.getElementById('listaOS');
-                div.innerHTML = `<h2>OSs da Capela: ${c}</h2><p style="text-align:center;color:#44546b;">Nenhuma OS encontrada.</p>`;
-                div.style.display = 'block';
-                return;
-            }
-            const sorted = osCap.slice().sort((a, b) => a.dataObj - b.dataObj);
-            // Ao visualizar por capela, não repetir o nome da capela em cada card — o título já mostra.
-            renderOSList(sorted, `OSs da Capela: ${c} (${sorted.length})`, false);
-        }
-
+        // Funções de Filtro (Mantidas)
         function atualizarBotaoFiltrar() {
-            const inicio = document.getElementById('dataInicio').value;
-            const fim = document.getElementById('dataFim').value;
-            document.getElementById('btnFiltrar').disabled = !(inicio && fim);
+            const dataInicio = document.getElementById('dataInicio').value;
+            const dataFim = document.getElementById('dataFim').value;
+            const btn = document.getElementById('btnFiltrar');
+            btn.disabled = !(dataInicio && dataFim);
         }
 
         function filtrarPorIntervalo() {
-            const inicioStr = document.getElementById('dataInicio').value;
-            const fimStr = document.getElementById('dataFim').value;
-            if (!inicioStr || !fimStr) return;
+            const dataInicioStr = document.getElementById('dataInicio').value;
+            const dataFimStr = document.getElementById('dataFim').value;
 
-            const dataInicio = new Date(inicioStr);
-            const dataFim = new Date(fimStr);
+            if (!dataInicioStr || !dataFimStr) return;
 
-            const filtradas = allOS.filter(os => os.dataObj >= dataInicio && os.dataObj <= dataFim);
+            // Transforma as strings YYYY-MM-DD em objetos Date (sem horas para comparação correta)
+            const inicio = getDateOnly(new Date(dataInicioStr));
+            const fim = getDateOnly(new Date(dataFimStr));
 
-            // Decidir se deve mostrar o nome da capela dentro do item:
-            // se houver um filtro de capela selecionado, já mostramos no título, então omitimos dentro do card.
-            const capelaSelect = document.getElementById('capelaSelect');
-            const selectedCapela = capelaSelect ? capelaSelect.value : '__todas__';
-            const showCapelaInItem = (selectedCapela === '__todas__');
+            // O filtro utiliza a lista 'allOS' já carregada na memória
+            const filtradas = allOS.filter(os => {
+                const osDate = os.dataObj;
+                // Compara a data da OS com o intervalo
+                return osDate >= inicio && osDate <= fim;
+            }).sort((a, b) => a.dataObj - b.dataObj); // Ordena por data (mais antigas primeiro)
 
-            if (!filtradas.length) {
-                const div = document.getElementById('listaOS');
-                div.innerHTML = `<h2>OSs entre ${formatarData(dataInicio)} e ${formatarData(dataFim)}</h2>
-                    <p style="text-align:center;color:#44546b;">Nenhuma OS encontrada nesse intervalo.</p>`;
-                div.style.display = 'block';
-            } else {
-                const sorted = filtradas.slice().sort((a, b) => a.dataObj - b.dataObj);
-                renderOSList(sorted, `OSs entre ${formatarData(dataInicio)} e ${formatarData(dataFim)} (${sorted.length})`, showCapelaInItem);
+            renderOSList(filtradas, `OS de ${formatarData(inicio)} a ${formatarData(fim)}`);
+            document.getElementById('listaOS').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        function exibirTodasOS() {
+            // Ordena as OS pela data de vencimento (as que vencem primeiro ficam no topo)
+            const sorted = [...allOS].sort((a, b) => a.dataObj - b.dataObj);
+            renderOSList(sorted, 'Todas as Ordens de Serviço');
+        }
+
+        function exibirVariasCapelas(capelasSelecionadas) {
+            let filtradas = allOS.filter(os => capelasSelecionadas.includes(os.capela));
+            // Ordena por data de vencimento
+            filtradas.sort((a, b) => a.dataObj - b.dataObj);
+            renderOSList(filtradas, `OS em Capelas Selecionadas`);
+            document.getElementById('listaOS').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        function toggleCapelaDropdown() {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            if (dropdownMenu) {
+                dropdownMenu.classList.toggle('show');
             }
         }
 
-        window.onload = async () => {
-            await obterDataReal(); // primeiro busca a data real
-            carregarDados();       // depois carrega o resto do sistema
-        };
+        function renderizarMenuCapelas() {
+            const divProps = document.getElementById('propriedades');
+
+            // Adicionando a classe 'multi-select' que estava faltando na divProps
+            divProps.className = 'multi-select';
+
+            // Verifica se o menu já foi renderizado
+            if (document.getElementById('dropdownBtn')) return;
+
+            divProps.innerHTML = `
+                    <button id="dropdownBtn" class="capelas-select">
+                        <span>Todas as capelas</span>
+                        <span class="material-icons-outlined" style="font-size: 1.2rem;">arrow_drop_down</span>
+                    </button>
+                    <div id="dropdownMenu" class="dropdown-content">
+                        <div class="checkbox-list" id="checkboxList"></div>
+                        <div class="dropdown-actions">
+                            <button id="okBtn">Aplicar</button>
+                            <button id="clearBtn">Limpar</button>
+                        </div>
+                    </div>
+                `;
+
+            const dropdownBtn = document.getElementById('dropdownBtn');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            const checkboxList = document.getElementById('checkboxList');
+            const okBtn = document.getElementById('okBtn');
+            const clearBtn = document.getElementById('clearBtn');
+
+            // preencher as capelas com checkboxes
+            checkboxList.innerHTML = `
+                <label><input type="checkbox" value="__todas__"> Todas as capelas (${allOS.length})</label>
+                ${Object.keys(capelas).sort().map(c =>
+                `<label><input type="checkbox" value="${c}"> ${c} (${capelas[c].length})</label>`
+            ).join('')}
+                `;
+
+            // Marcar "Todas as capelas" por padrão
+            const allCheckbox = checkboxList.querySelector('input[value="__todas__"]');
+            if (allCheckbox) allCheckbox.checked = true;
+
+            // Ações do Dropdown
+            dropdownBtn.onclick = (e) => {
+                e.stopPropagation();
+                toggleCapelaDropdown();
+            };
+
+            okBtn.onclick = () => {
+                const selecionadas = [...checkboxList.querySelectorAll('input:checked')].map(cb => cb.value);
+                dropdownMenu.classList.remove('show');
+                if (selecionadas.includes('__todas__') || selecionadas.length === 0) {
+                    exibirTodasOS();
+                    dropdownBtn.querySelector('span:first-child').textContent = `Todas as capelas`;
+                } else {
+                    const capelasSemTodas = selecionadas.filter(c => c !== '__todas__');
+                    exibirVariasCapelas(capelasSemTodas);
+                    dropdownBtn.querySelector('span:first-child').textContent = `${capelasSemTodas.length} Capela(s) Selecionada(s)`;
+                }
+            };
+
+            clearBtn.onclick = () => {
+                checkboxList.querySelectorAll('input').forEach(cb => cb.checked = false);
+                if (allCheckbox) allCheckbox.checked = true;
+                dropdownBtn.querySelector('span:first-child').textContent = `Todas as capelas`;
+                exibirTodasOS();
+                dropdownMenu.classList.remove('show');
+            };
+
+            window.addEventListener('click', e => {
+                if (!e.target.closest('.multi-select') && dropdownMenu) dropdownMenu.classList.remove('show');
+            });
+        }
+        // --- FIM: Funções de Carregamento e Filtro ---
     </script>
 </body>
 
